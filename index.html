@@ -1,0 +1,1951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Tracker Pro - Spaced Repetition System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Reset and Base Styles */
+* {
+   margin: 0;
+   padding: 0;
+   box-sizing: border-box;
+}
+
+body {
+   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+   min-height: 100vh;
+   color: #333;
+   overflow-x: hidden;
+}
+
+.container-fluid {
+   padding: 0;
+   background: transparent;
+}
+
+/* Header Section */
+header {
+   background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%) !important;
+   backdrop-filter: blur(20px);
+   border-bottom: 1px solid rgba(255,255,255,0.1);
+   padding: 3rem 0 !important;
+   position: relative;
+   overflow: hidden;
+}
+
+header::before {
+   content: '';
+   position: absolute;
+   top: 0;
+   left: 0;
+   right: 0;
+   bottom: 0;
+   background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="1" fill="rgba(255,255,255,0.05)"/><circle cx="80" cy="80" r="1" fill="rgba(255,255,255,0.05)"/><circle cx="40" cy="60" r="1" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+   pointer-events: none;
+}
+
+header h1 {
+   font-size: 3.5rem;
+   font-weight: 800;
+   margin-bottom: 0.5rem;
+   text-shadow: 0 4px 20px rgba(0,0,0,0.1);
+   letter-spacing: -0.02em;
+}
+
+header .lead {
+   font-size: 1.25rem;
+   font-weight: 400;
+   opacity: 0.9;
+   margin-bottom: 2rem;
+}
+
+.stats-bar {
+   gap: 3rem !important;
+}
+
+.stat-item {
+   text-align: center;
+   padding: 1.5rem;
+   background: rgba(255,255,255,0.1);
+   border-radius: 16px;
+   backdrop-filter: blur(10px);
+   border: 1px solid rgba(255,255,255,0.2);
+   transition: all 0.3s ease;
+   min-width: 120px;
+}
+
+.stat-item:hover {
+   transform: translateY(-4px);
+   background: rgba(255,255,255,0.15);
+   box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+}
+
+.stat-item strong {
+   font-size: 2rem;
+   font-weight: 700;
+   display: block;
+   margin-bottom: 0.25rem;
+}
+
+.stat-item small {
+   font-size: 0.875rem;
+   opacity: 0.8;
+   font-weight: 500;
+}
+
+/* Navigation Tabs */
+.nav-pills {
+   padding: 2rem 0;
+   justify-content: center;
+   background: transparent;
+}
+
+.nav-link {
+   background: rgba(255,255,255,0.1) !important;
+   border: 1px solid rgba(255,255,255,0.2) !important;
+   color: white !important;
+   padding: 1rem 2rem !important;
+   border-radius: 12px !important;
+   font-weight: 600 !important;
+   transition: all 0.3s ease !important;
+   backdrop-filter: blur(10px) !important;
+   margin: 0 0.5rem !important;
+   font-size: 0.95rem !important;
+}
+
+.nav-link:hover {
+   background: rgba(255,255,255,0.2) !important;
+   transform: translateY(-2px) !important;
+   box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+}
+
+.nav-link.active {
+   background: linear-gradient(135deg, #ff6b6b, #4ecdc4) !important;
+   color: white !important;
+   border-color: transparent !important;
+   box-shadow: 0 8px 25px rgba(0,0,0,0.2) !important;
+   transform: translateY(-2px) !important;
+}
+
+.nav-link i {
+   margin-right: 0.5rem;
+}
+
+/* Tab Content */
+.tab-content {
+   display: none;
+   padding: 2rem;
+   animation: fadeIn 0.5s ease-in-out;
+}
+
+.tab-content.active {
+   display: block;
+}
+
+@keyframes fadeIn {
+   from { opacity: 0; transform: translateY(20px); }
+   to { opacity: 1; transform: translateY(0); }
+}
+
+/* Cards */
+.card {
+   background: rgba(255,255,255,0.95) !important;
+   border: 1px solid rgba(255,255,255,0.2) !important;
+   border-radius: 20px !important;
+   box-shadow: 0 20px 40px rgba(0,0,0,0.1) !important;
+   backdrop-filter: blur(20px) !important;
+   transition: all 0.3s ease !important;
+   overflow: hidden !important;
+}
+
+.card:hover {
+   transform: translateY(-8px) !important;
+   box-shadow: 0 30px 60px rgba(0,0,0,0.15) !important;
+}
+
+.card-header {
+   border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+   padding: 1.5rem 2rem !important;
+   font-weight: 700 !important;
+   position: relative !important;
+   overflow: hidden !important;
+}
+
+.card-header::before {
+   content: '';
+   position: absolute;
+   top: 0;
+   left: 0;
+   right: 0;
+   bottom: 0;
+   background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+   pointer-events: none;
+}
+
+.card-header h3 {
+   font-size: 1.5rem;
+   font-weight: 700;
+   margin: 0;
+   position: relative;
+   z-index: 1;
+}
+
+.card-body {
+   padding: 2rem !important;
+   position: relative;
+}
+
+/* Form Elements */
+.form-label {
+   font-weight: 600 !important;
+   color: #333 !important;
+   margin-bottom: 0.75rem !important;
+   font-size: 0.95rem !important;
+}
+
+.form-control, .form-select {
+   border: 2px solid rgba(102, 126, 234, 0.1) !important;
+   border-radius: 12px !important;
+   padding: 0.875rem 1.25rem !important;
+   font-size: 0.95rem !important;
+   transition: all 0.3s ease !important;
+   background: rgba(255,255,255,0.8) !important;
+   backdrop-filter: blur(10px) !important;
+}
+
+.form-control:focus, .form-select:focus {
+   border-color: #667eea !important;
+   box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15) !important;
+   background: rgba(255,255,255,0.95) !important;
+   transform: translateY(-1px) !important;
+}
+
+.form-control::placeholder {
+   color: rgba(51,51,51,0.6) !important;
+}
+
+/* Buttons */
+.btn {
+   border-radius: 12px !important;
+   font-weight: 600 !important;
+   padding: 0.875rem 1.5rem !important;
+   transition: all 0.3s ease !important;
+   border: none !important;
+   font-size: 0.95rem !important;
+   position: relative !important;
+   overflow: hidden !important;
+}
+
+.btn::before {
+   content: '';
+   position: absolute;
+   top: 0;
+   left: -100%;
+   width: 100%;
+   height: 100%;
+   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+   transition: left 0.5s;
+}
+
+.btn:hover::before {
+   left: 100%;
+}
+
+.btn-success {
+   background: linear-gradient(135deg, #4ecdc4, #44a08d) !important;
+   box-shadow: 0 8px 25px rgba(78, 205, 196, 0.3) !important;
+}
+
+.btn-success:hover {
+   transform: translateY(-2px) !important;
+   box-shadow: 0 12px 35px rgba(78, 205, 196, 0.4) !important;
+}
+
+.btn-primary {
+   background: linear-gradient(135deg, #667eea, #764ba2) !important;
+   box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3) !important;
+}
+
+.btn-primary:hover {
+   transform: translateY(-2px) !important;
+   box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4) !important;
+}
+
+.btn-warning {
+   background: linear-gradient(135deg, #f093fb, #f5576c) !important;
+   box-shadow: 0 8px 25px rgba(240, 147, 251, 0.3) !important;
+}
+
+.btn-info {
+   background: linear-gradient(135deg, #4facfe, #00f2fe) !important;
+   box-shadow: 0 8px 25px rgba(79, 172, 254, 0.3) !important;
+}
+
+.btn-danger {
+   background: linear-gradient(135deg, #fa709a, #fee140) !important;
+   box-shadow: 0 8px 25px rgba(250, 112, 154, 0.3) !important;
+}
+
+.btn-sm {
+   padding: 0.5rem 1rem !important;
+   font-size: 0.875rem !important;
+}
+
+.btn-lg {
+   padding: 1.25rem 2rem !important;
+   font-size: 1.1rem !important;
+}
+
+/* Topic Items */
+.border.rounded.p-3.mb-3.bg-light {
+   background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7)) !important;
+   border: 1px solid rgba(102, 126, 234, 0.1) !important;
+   border-radius: 16px !important;
+   padding: 1.5rem !important;
+   margin-bottom: 1.5rem !important;
+   transition: all 0.3s ease !important;
+   backdrop-filter: blur(10px) !important;
+   box-shadow: 0 8px 25px rgba(0,0,0,0.05) !important;
+}
+
+.border.rounded.p-3.mb-3.bg-light:hover {
+   transform: translateY(-4px) !important;
+   box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;
+   border-color: rgba(102, 126, 234, 0.2) !important;
+}
+
+/* Badges */
+.badge {
+   font-weight: 600 !important;
+   padding: 0.5rem 1rem !important;
+   border-radius: 8px !important;
+   font-size: 0.8rem !important;
+   letter-spacing: 0.025em !important;
+}
+
+.badge.bg-success {
+   background: linear-gradient(135deg, #4ecdc4, #44a08d) !important;
+}
+
+.badge.bg-warning {
+   background: linear-gradient(135deg, #f093fb, #f5576c) !important;
+   color: white !important;
+}
+
+.badge.bg-danger {
+   background: linear-gradient(135deg, #fa709a, #fee140) !important;
+}
+
+.badge.bg-info {
+   background: linear-gradient(135deg, #4facfe, #00f2fe) !important;
+}
+
+.badge.bg-secondary {
+   background: linear-gradient(135deg, #667eea, #764ba2) !important;
+}
+
+/* Calendar */
+.calendar-grid {
+   background: rgba(255,255,255,0.9);
+   border-radius: 16px;
+   padding: 1.5rem;
+   backdrop-filter: blur(10px);
+}
+
+.calendar-grid .row {
+   margin: 0;
+}
+
+.calendar-grid .col {
+   border: 1px solid rgba(102, 126, 234, 0.1) !important;
+   transition: all 0.3s ease !important;
+   cursor: pointer !important;
+   position: relative !important;
+   background: rgba(255,255,255,0.5) !important;
+}
+
+.calendar-grid .col:hover {
+   background: rgba(102, 126, 234, 0.1) !important;
+   transform: scale(1.02) !important;
+   z-index: 2 !important;
+   box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+}
+
+.calendar-grid .bg-primary {
+   background: linear-gradient(135deg, #667eea, #764ba2) !important;
+   color: white !important;
+}
+
+.calendar-controls .btn {
+   border-radius: 50% !important;
+   width: 40px !important;
+   height: 40px !important;
+   padding: 0 !important;
+   display: flex !important;
+   align-items: center !important;
+   justify-content: center !important;
+}
+
+/* Revision Items */
+.card.h-100.border-3 {
+   transition: all 0.3s ease !important;
+   background: rgba(255,255,255,0.95) !important;
+   backdrop-filter: blur(10px) !important;
+}
+
+.card.h-100.border-3:hover {
+   transform: translateY(-6px) !important;
+   box-shadow: 0 20px 40px rgba(0,0,0,0.15) !important;
+}
+
+.border-success {
+   border-color: #4ecdc4 !important;
+}
+
+.border-warning {
+   border-color: #f093fb !important;
+}
+
+.border-danger {
+   border-color: #fa709a !important;
+}
+
+/* Statistics */
+.display-4, .display-6 {
+   font-weight: 800 !important;
+   background: linear-gradient(135deg, #667eea, #764ba2) !important;
+   -webkit-background-clip: text !important;
+   -webkit-text-fill-color: transparent !important;
+   background-clip: text !important;
+}
+
+/* Progress Bars */
+.progress {
+   background: rgba(102, 126, 234, 0.1) !important;
+   border-radius: 8px !important;
+   overflow: hidden !important;
+}
+
+.progress-bar {
+   background: linear-gradient(135deg, #667eea, #764ba2) !important;
+   transition: width 0.6s ease !important;
+}
+
+/* Achievements */
+.alert {
+   border: none !important;
+   border-radius: 12px !important;
+   padding: 1rem 1.5rem !important;
+   backdrop-filter: blur(10px) !important;
+}
+
+.alert-success {
+   background: linear-gradient(135deg, rgba(78, 205, 196, 0.9), rgba(68, 160, 141, 0.9)) !important;
+   color: white !important;
+}
+
+.alert-secondary {
+   background: rgba(108, 117, 125, 0.1) !important;
+   color: #6c757d !important;
+}
+
+/* Notifications */
+.alert.position-fixed {
+   border-radius: 16px !important;
+   backdrop-filter: blur(20px) !important;
+   border: 1px solid rgba(255,255,255,0.2) !important;
+   animation: slideInRight 0.3s ease !important;
+}
+
+@keyframes slideInRight {
+   from { transform: translateX(100%); opacity: 0; }
+   to { transform: translateX(0); opacity: 1; }
+}
+
+/* Modal */
+.modal {
+   backdrop-filter: blur(20px) !important;
+}
+
+.modal-content {
+   border: none !important;
+   border-radius: 20px !important;
+   background: rgba(255,255,255,0.95) !important;
+   backdrop-filter: blur(20px) !important;
+   box-shadow: 0 30px 60px rgba(0,0,0,0.2) !important;
+}
+
+.modal-header {
+   border-bottom: 1px solid rgba(0,0,0,0.05) !important;
+   padding: 2rem !important;
+}
+
+.modal-body {
+   padding: 2rem !important;
+}
+
+.modal-footer {
+   border-top: 1px solid rgba(0,0,0,0.05) !important;
+   padding: 2rem !important;
+}
+
+/* Form Switches */
+.form-check-input:checked {
+   background-color: #667eea !important;
+   border-color: #667eea !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+   header h1 {
+       font-size: 2.5rem;
+   }
+   
+   .stats-bar {
+       gap: 1rem !important;
+       flex-wrap: wrap;
+   }
+   
+   .nav-link {
+       padding: 0.75rem 1.25rem !important;
+       margin: 0.25rem !important;
+       font-size: 0.875rem !important;
+   }
+   
+   .card-body {
+       padding: 1.5rem !important;
+   }
+   
+   .tab-content {
+       padding: 1rem;
+   }
+}
+
+@media (max-width: 576px) {
+   .stats-bar {
+       flex-direction: column;
+       align-items: center;
+   }
+   
+   .stat-item {
+       width: 100%;
+       max-width: 200px;
+   }
+   
+   .nav-pills {
+       flex-wrap: wrap;
+       justify-content: center;
+   }
+   
+   header {
+       padding: 2rem 0 !important;
+   }
+   
+   header h1 {
+       font-size: 2rem;
+   }
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+   width: 8px;
+}
+
+::-webkit-scrollbar-track {
+   background: rgba(255,255,255,0.1);
+   border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+   background: linear-gradient(135deg, #667eea, #764ba2);
+   border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+   background: linear-gradient(135deg, #764ba2, #667eea);
+}
+
+/* Loading Animation */
+@keyframes pulse {
+   0% { opacity: 1; }
+   50% { opacity: 0.7; }
+   100% { opacity: 1; }
+}
+
+.loading {
+   animation: pulse 1.5s ease-in-out infinite;
+}
+    </style>
+
+</head>
+<body>
+    <div class="container-fluid">
+        <!-- Header Section -->
+        <header class="text-center py-4 bg-primary text-white">
+            <h1><i class="fas fa-brain"></i> Cognito</h1>
+            <p class="lead">Master Your Knowledge with Spaced Repetition</p>
+            <div class="stats-bar d-flex justify-content-center gap-4 mt-3">
+                <div class="stat-item">
+                    <strong id="totalTopics">0</strong>
+                    <small class="d-block">Total Topics</small>
+                </div>
+                <div class="stat-item">
+                    <strong id="todayRevisions">0</strong>
+                    <small class="d-block">Today's Revisions</small>
+                </div>
+                <div class="stat-item">
+                    <strong id="streakCount">0</strong>
+                    <small class="d-block">Current Streak</small>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="nav nav-pills justify-content-center my-4" id="mainTabs">
+            <button class="nav-link active mx-2" data-tab="today">
+                <i class="fas fa-plus-circle"></i> Today's Learning
+            </button>
+            <button class="nav-link mx-2" data-tab="revisions">
+                <i class="fas fa-redo"></i> Revisions
+            </button>
+            <button class="nav-link mx-2" data-tab="calendar">
+                <i class="fas fa-calendar"></i> Calendar View
+            </button>
+            <button class="nav-link mx-2" data-tab="statistics">
+                <i class="fas fa-chart-bar"></i> Statistics
+            </button>
+            <button class="nav-link mx-2" data-tab="settings">
+                <i class="fas fa-cog"></i> Settings
+            </button>
+        </nav>
+
+        <!-- Today's Learning Tab -->
+        <div id="today" class="tab-content active">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="card shadow-lg">
+                        <div class="card-header bg-success text-white">
+                            <h3><i class="fas fa-book-open"></i> Add New Topic</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="topicForm">
+                                <div class="mb-3">
+                                    <label class="form-label">Topic Title</label>
+                                    <input type="text" id="topicTitle" class="form-control" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Category</label>
+                                    <select id="topicCategory" class="form-select">
+                                        <option value="General">General</option>
+                                        <option value="Mathematics">Mathematics</option>
+                                        <option value="Science">Science</option>
+                                        <option value="Technology">Technology</option>
+                                        <option value="Languages">Languages</option>
+                                        <option value="History">History</option>
+                                        <option value="Art">Art</option>
+                                        <option value="Business">Business</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Description/Notes</label>
+                                    <textarea id="topicDescription" class="form-control" rows="4"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Difficulty Level</label>
+                                    <select id="difficultyLevel" class="form-select">
+                                        <option value="Easy">Easy</option>
+                                        <option value="Medium">Medium</option>
+                                        <option value="Hard">Hard</option>
+                                        <option value="Expert">Expert</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Time Spent (minutes)</label>
+                                    <input type="number" id="timeSpent" class="form-control" min="1" value="30">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Priority</label>
+                                    <select id="priority" class="form-select">
+                                        <option value="Low">Low</option>
+                                        <option value="Medium">Medium</option>
+                                        <option value="High">High</option>
+                                        <option value="Critical">Critical</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Tags (comma separated)</label>
+                                    <input type="text" id="topicTags" class="form-control" placeholder="algorithm, data structure, sorting">
+                                </div>
+                                <button type="submit" class="btn btn-success btn-lg w-100">
+                                    <i class="fas fa-plus"></i> Add Topic
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6">
+                    <div class="card shadow-lg">
+                        <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                            <h3><i class="fas fa-list"></i> Today's Topics</h3>
+                            <span class="badge bg-light text-dark" id="todayCount">0</span>
+                        </div>
+                        <div class="card-body" style="max-height: 600px; overflow-y: auto;">
+                            <div id="todayTopics"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Revisions Tab -->
+        <div id="revisions" class="tab-content">
+            <div class="card shadow-lg">
+                <div class="card-header bg-warning text-dark">
+                    <h3><i class="fas fa-redo"></i> Revision Schedule</h3>
+                    <p class="mb-0">Follow the spaced repetition pattern: Day 7, 16, 22, 30, 36, 43</p>
+                </div>
+                <div class="card-body">
+                    <div class="revision-filters mb-4">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <select id="revisionFilter" class="form-select">
+                                    <option value="all">All Revisions</option>
+                                    <option value="today">Due Today</option>
+                                    <option value="overdue">Overdue</option>
+                                    <option value="upcoming">Upcoming</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <select id="categoryFilter" class="form-select">
+                                    <option value="all">All Categories</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <button class="btn btn-primary" onclick="markAllCompleted()">
+                                    <i class="fas fa-check-double"></i> Mark All as Done
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="revisionsContainer"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calendar View Tab -->
+        <div id="calendar" class="tab-content">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h3><i class="fas fa-calendar"></i> Calendar View</h3>
+                    <div class="calendar-controls">
+                        <button class="btn btn-light btn-sm" onclick="changeMonth(-1)">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <span id="currentMonth" class="mx-3"></span>
+                        <button class="btn btn-light btn-sm" onclick="changeMonth(1)">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="calendarGrid" class="calendar-grid"></div>
+                    <div class="calendar-legend mt-3">
+                        <div class="d-flex flex-wrap gap-3">
+                            <div><span class="badge bg-success">●</span> Topics Added</div>
+                            <div><span class="badge bg-warning">●</span> Revisions Due</div>
+                            <div><span class="badge bg-danger">●</span> Overdue</div>
+                            <div><span class="badge bg-info">●</span> Completed</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Tab -->
+        <div id="statistics" class="tab-content">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card shadow-lg mb-4">
+                        <div class="card-header bg-info text-white">
+                            <h3><i class="fas fa-chart-line"></i> Learning Progress</h3>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="progressChart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card shadow-lg mb-4">
+                        <div class="card-header bg-success text-white">
+                            <h3><i class="fas fa-trophy"></i> Achievements</h3>
+                        </div>
+                        <div class="card-body" id="achievements">
+                            <!-- Achievements will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="card shadow-lg">
+                        <div class="card-header bg-warning text-dark">
+                            <h3><i class="fas fa-pie-chart"></i> Category Distribution</h3>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="categoryChart" width="300" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card shadow-lg">
+                        <div class="card-header bg-danger text-white">
+                            <h3><i class="fas fa-clock"></i> Study Time Analytics</h3>
+                        </div>
+                        <div class="card-body" id="timeAnalytics">
+                            <!-- Time analytics will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settings" class="tab-content">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card shadow-lg">
+                        <div class="card-header bg-secondary text-white">
+                            <h3><i class="fas fa-cog"></i> Application Settings</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-4">
+                                <h5>Revision Schedule</h5>
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <label class="form-label">1st Revision</label>
+                                        <input type="number" id="revision1" class="form-control" value="7" min="1">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label">2nd Revision</label>
+                                        <input type="number" id="revision2" class="form-control" value="16" min="1">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label">3rd Revision</label>
+                                        <input type="number" id="revision3" class="form-control" value="22" min="1">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label">4th Revision</label>
+                                        <input type="number" id="revision4" class="form-control" value="30" min="1">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label">5th Revision</label>
+                                        <input type="number" id="revision5" class="form-control" value="36" min="1">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label">6th Revision</label>
+                                        <input type="number" id="revision6" class="form-control" value="43" min="1">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <h5>Notifications</h5>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="dailyReminder" checked>
+                                    <label class="form-check-label">Daily reminder notifications</label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="revisionAlerts" checked>
+                                    <label class="form-check-label">Revision due alerts</label>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <h5>Data Management</h5>
+                                <div class="d-flex gap-3">
+                                    <button class="btn btn-primary" onclick="exportData()">
+                                        <i class="fas fa-download"></i> Export Data
+                                    </button>
+                                    <button class="btn btn-warning" onclick="importData()">
+                                        <i class="fas fa-upload"></i> Import Data
+                                    </button>
+                                    <button class="btn btn-danger" onclick="clearAllData()">
+                                        <i class="fas fa-trash"></i> Clear All Data
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4">
+                    <div class="card shadow-lg">
+                        <div class="card-header bg-info text-white">
+                            <h3><i class="fas fa-info-circle"></i> About</h3>
+                        </div>
+                        <div class="card-body">
+                            <h6>Learning Tracker Pro v2.0</h6>
+                            <p class="text-muted">Advanced spaced repetition system for optimal learning retention.</p>
+                            
+                            <h6 class="mt-3">Features:</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success"></i> Spaced repetition algorithm</li>
+                                <li><i class="fas fa-check text-success"></i> Progress tracking</li>
+                                <li><i class="fas fa-check text-success"></i> Category management</li>
+                                <li><i class="fas fa-check text-success"></i> Statistics & analytics</li>
+                                <li><i class="fas fa-check text-success"></i> Data export/import</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden file input for import -->
+    <input type="file" id="fileInput" accept=".json" style="display: none;">
+
+    <script>
+        // Application State
+        let appData = {
+            topics: [],
+            revisions: [],
+            settings: {
+                revisionSchedule: [7, 16, 22, 30, 36, 43],
+                notifications: {
+                    dailyReminder: true,
+                    revisionAlerts: true
+                }
+            },
+            statistics: {
+                totalTopics: 0,
+                completedRevisions: 0,
+                currentStreak: 0,
+                studyTime: 0
+            }
+        };
+
+        // Load data from local storage on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            loadAppData();
+            initializeApp();
+            updateAllDisplays();
+        });
+
+        // Core Functions
+        function initializeApp() {
+            setupEventListeners();
+            updateStats();
+            generateCalendar();
+            populateCategoryFilter();
+        }
+
+        function setupEventListeners() {
+            // Tab switching
+            document.querySelectorAll('[data-tab]').forEach(tab => {
+                tab.addEventListener('click', (e) => switchTab(e.target.dataset.tab));
+            });
+
+            // Form submission
+            document.getElementById('topicForm').addEventListener('submit', handleTopicSubmission);
+
+            // Settings changes
+            document.querySelectorAll('#settings input').forEach(input => {
+                input.addEventListener('change', saveSettings);
+            });
+        }
+
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all nav links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Show selected tab and mark nav as active
+            document.getElementById(tabName).classList.add('active');
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            
+            // Update displays based on active tab
+            if (tabName === 'revisions') {
+                displayRevisions();
+            } else if (tabName === 'calendar') {
+                generateCalendar();
+            } else if (tabName === 'statistics') {
+                updateStatistics();
+            }
+        }
+
+        function handleTopicSubmission(e) {
+            e.preventDefault();
+            
+            const topic = {
+                id: generateUniqueId(),
+                title: document.getElementById('topicTitle').value,
+                category: document.getElementById('topicCategory').value,
+                description: document.getElementById('topicDescription').value,
+                difficulty: document.getElementById('difficultyLevel').value,
+                timeSpent: parseInt(document.getElementById('timeSpent').value),
+                priority: document.getElementById('priority').value,
+                tags: document.getElementById('topicTags').value.split(',').map(tag => tag.trim()).filter(tag => tag),
+                dateAdded: new Date().toISOString(),
+                completed: false
+            };
+            
+            addTopic(topic);
+            document.getElementById('topicForm').reset();
+        }
+
+        function addTopic(topic) {
+            appData.topics.push(topic);
+            createRevisionSchedule(topic);
+            saveAppData();
+            updateAllDisplays();
+            showNotification('Topic added successfully!', 'success');
+        }
+
+        function createRevisionSchedule(topic) {
+            const baseDate = new Date(topic.dateAdded);
+            
+            appData.settings.revisionSchedule.forEach((days, index) => {
+                const revisionDate = new Date(baseDate);
+                revisionDate.setDate(revisionDate.getDate() + days);
+                
+                const revision = {
+                    id: generateUniqueId(),
+                    topicId: topic.id,
+                    topicTitle: topic.title,
+                    topicCategory: topic.category,
+                    revisionNumber: index + 1,
+                    dueDate: revisionDate.toISOString(),
+                    completed: false,
+                    completedDate: null
+                };
+                
+                appData.revisions.push(revision);
+            });
+        }
+
+        function displayTodayTopics() {
+            const today = new Date().toDateString();
+            const todayTopics = appData.topics.filter(topic => 
+                new Date(topic.dateAdded).toDateString() === today
+            );
+            
+            const container = document.getElementById('todayTopics');
+            container.innerHTML = '';
+            
+            if (todayTopics.length === 0) {
+                container.innerHTML = '<p class="text-muted text-center py-4">No topics added today. Start learning something new!</p>';
+                return;
+            }
+            
+            todayTopics.forEach(topic => {
+                const topicElement = createTopicElement(topic);
+                container.appendChild(topicElement);
+            });
+            
+            document.getElementById('todayCount').textContent = todayTopics.length;
+        }
+
+        function createTopicElement(topic) {
+            const div = document.createElement('div');
+            div.className = 'border rounded p-3 mb-3 bg-light';
+            
+            const priorityColor = {
+                'Low': 'success',
+                'Medium': 'warning',
+                'High': 'danger',
+                'Critical': 'dark'
+            };
+            
+            div.innerHTML = `
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h6 class="mb-0">${topic.title}</h6>
+                    <span class="badge bg-${priorityColor[topic.priority]}">${topic.priority}</span>
+                </div>
+                <div class="mb-2">
+                    <small class="text-muted">
+                        <i class="fas fa-folder"></i> ${topic.category} |
+                        <i class="fas fa-clock"></i> ${topic.timeSpent}min |
+                        <i class="fas fa-signal"></i> ${topic.difficulty}
+                    </small>
+                </div>
+                ${topic.description ? `<p class="mb-2 small">${topic.description}</p>` : ''}
+                ${topic.tags.length > 0 ? `
+                    <div class="mb-2">
+                        ${topic.tags.map(tag => `<span class="badge bg-secondary me-1">${tag}</span>`).join('')}
+                    </div>
+                ` : ''}
+                <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-outline-primary" onclick="editTopic('${topic.id}')" title="Edit">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteTopic('${topic.id}')" title="Delete">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-info" onclick="viewTopicDetails('${topic.id}')" title="Details">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            `;
+            
+            return div;
+        }
+
+        function displayRevisions() {
+            const filter = document.getElementById('revisionFilter').value;
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            
+            let filteredRevisions = appData.revisions.filter(revision => !revision.completed);
+            
+            // Apply filters
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            if (filter === 'today') {
+                filteredRevisions = filteredRevisions.filter(revision => {
+                    const dueDate = new Date(revision.dueDate);
+                    dueDate.setHours(0, 0, 0, 0);
+                    return dueDate.getTime() === today.getTime();
+                });
+            } else if (filter === 'overdue') {
+                filteredRevisions = filteredRevisions.filter(revision => 
+                    new Date(revision.dueDate) < today
+                );
+            } else if (filter === 'upcoming') {
+                filteredRevisions = filteredRevisions.filter(revision => 
+                    new Date(revision.dueDate) > today
+                );
+            }
+            
+            if (categoryFilter !== 'all') {
+                filteredRevisions = filteredRevisions.filter(revision => 
+                    revision.topicCategory === categoryFilter
+                );
+            }
+            
+            // Group by revision number
+            const groupedRevisions = {};
+            filteredRevisions.forEach(revision => {
+                if (!groupedRevisions[revision.revisionNumber]) {
+                    groupedRevisions[revision.revisionNumber] = [];
+                }
+                groupedRevisions[revision.revisionNumber].push(revision);
+            });
+            
+            const container = document.getElementById('revisionsContainer');
+            container.innerHTML = '';
+            
+            if (Object.keys(groupedRevisions).length === 0) {
+                container.innerHTML = '<p class="text-center text-muted py-4">No revisions found matching your criteria.</p>';
+                return;
+            }
+            
+            // Display each revision group
+            Object.keys(groupedRevisions).sort((a, b) => parseInt(a) - parseInt(b)).forEach(revisionNumber => {
+                const revisionGroup = groupedRevisions[revisionNumber];
+                const groupElement = createRevisionGroupElement(revisionNumber, revisionGroup);
+                container.appendChild(groupElement);
+            });
+        }
+
+        function createRevisionGroupElement(revisionNumber, revisions) {
+            const div = document.createElement('div');
+            div.className = 'mb-4';
+            
+            const revisionColors = ['primary', 'success', 'info', 'warning', 'danger', 'secondary'];
+            const colorIndex = (parseInt(revisionNumber) - 1) % revisionColors.length;
+            
+            div.innerHTML = `
+                <div class="bg-${revisionColors[colorIndex]} text-white p-3 rounded-top">
+                    <h5 class="mb-0">
+                        <i class="fas fa-redo"></i> Revision ${revisionNumber}
+                        <span class="badge bg-light text-dark ms-2">${revisions.length} topics</span>
+                    </h5>
+                </div>
+                <div class="border border-top-0 rounded-bottom p-3">
+                    <div class="row">
+                        ${revisions.map(revision => createRevisionItemHTML(revision)).join('')}
+                    </div>
+                </div>
+            `;
+            
+            return div;
+        }
+
+        function createRevisionItemHTML(revision) {
+            const dueDate = new Date(revision.dueDate);
+            const today = new Date();
+            const isOverdue = dueDate < today;
+            const isDueToday = dueDate.toDateString() === today.toDateString();
+            
+            let statusClass = 'border-success';
+            let statusIcon = 'fas fa-clock';
+            let statusText = 'Upcoming';
+            
+            if (isOverdue) {
+                statusClass = 'border-danger';
+                statusIcon = 'fas fa-exclamation-triangle';
+                statusText = 'Overdue';
+            } else if (isDueToday) {
+                statusClass = 'border-warning';
+                statusIcon = 'fas fa-bell';
+                statusText = 'Due Today';
+            }
+            
+            return `
+                <div class="col-lg-4 col-md-6 mb-3">
+                    <div class="card h-100 ${statusClass} border-3">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h6 class="card-title mb-0">${revision.topicTitle}</h6>
+                                <small class="text-muted">
+                                    <i class="${statusIcon}"></i> ${statusText}
+                                </small>
+                            </div>
+                            <p class="card-text small text-muted">
+                                <i class="fas fa-folder"></i> ${revision.topicCategory}<br>
+                                <i class="fas fa-calendar"></i> Due: ${dueDate.toLocaleDateString()}
+                            </p>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-success" onclick="markRevisionCompleted('${revision.id}')" title="Mark as completed">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button class="btn btn-sm btn-primary" onclick="viewTopicForRevision('${revision.topicId}')" title="View topic">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning" onclick="rescheduleRevision('${revision.id}')" title="Reschedule">
+                                    <i class="fas fa-calendar-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function markRevisionCompleted(revisionId) {
+            const revision = appData.revisions.find(r => r.id === revisionId);
+            if (revision) {
+                revision.completed = true;
+                revision.completedDate = new Date().toISOString();
+                appData.statistics.completedRevisions++;
+                saveAppData();
+                updateAllDisplays();
+                showNotification('Revision marked as completed!', 'success');
+            }
+        }
+
+        function generateCalendar() {
+            const now = new Date();
+            const currentMonth = now.getMonth();
+            const currentYear = now.getFullYear();
+            
+            document.getElementById('currentMonth').textContent = 
+                new Date(currentYear, currentMonth).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+            
+            const firstDay = new Date(currentYear, currentMonth, 1);
+            const lastDay = new Date(currentYear, currentMonth + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            const startingDayOfWeek = firstDay.getDay();
+            
+            const calendarGrid = document.getElementById('calendarGrid');
+            calendarGrid.innerHTML = '';
+            
+            // Add calendar header
+            const header = document.createElement('div');
+            header.className = 'row text-center fw-bold mb-2';
+            ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(day => {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'col';
+                dayElement.textContent = day;
+                header.appendChild(dayElement);
+            });
+            calendarGrid.appendChild(header);
+            
+            // Generate calendar days
+            let currentWeek = document.createElement('div');
+            currentWeek.className = 'row mb-1';
+            
+            // Add empty cells for days before the first day of the month
+            for (let i = 0; i < startingDayOfWeek; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'col border p-2 text-muted';
+                emptyDay.style.minHeight = '80px';
+                currentWeek.appendChild(emptyDay);
+            }
+            
+            // Add days of the month
+            for (let day = 1; day <= daysInMonth; day++) {
+                if ((startingDayOfWeek + day - 1) % 7 === 0 && day > 1) {
+                    calendarGrid.appendChild(currentWeek);
+                    currentWeek = document.createElement('div');
+                    currentWeek.className = 'row mb-1';
+                }
+                
+                const dayElement = createCalendarDayElement(day, currentMonth, currentYear);
+                currentWeek.appendChild(dayElement);
+            }
+            
+            // Fill remaining cells in the last week
+            const remainingCells = 7 - ((startingDayOfWeek + daysInMonth) % 7);
+            if (remainingCells < 7) {
+                for (let i = 0; i < remainingCells; i++) {
+                    const emptyDay = document.createElement('div');
+                    emptyDay.className = 'col border p-2 text-muted';
+                    emptyDay.style.minHeight = '80px';
+                    currentWeek.appendChild(emptyDay);
+                }
+            }
+            
+            calendarGrid.appendChild(currentWeek);
+        }
+
+        function createCalendarDayElement(day, month, year) {
+            const dayElement = document.createElement('div');
+            dayElement.className = 'col border p-2 position-relative';
+            dayElement.style.minHeight = '80px';
+            
+            const dateStr = new Date(year, month, day).toDateString();
+            const today = new Date().toDateString();
+            
+            if (dateStr === today) {
+                dayElement.classList.add('bg-primary', 'text-white');
+            }
+            
+            // Add day number
+            const dayNumber = document.createElement('div');
+            dayNumber.className = 'fw-bold';
+            dayNumber.textContent = day;
+            dayElement.appendChild(dayNumber);
+            
+            // Check for topics added on this day
+            const topicsOnDay = appData.topics.filter(topic => 
+                new Date(topic.dateAdded).toDateString() === dateStr
+            );
+            
+            if (topicsOnDay.length > 0) {
+                const topicBadge = document.createElement('span');
+                topicBadge.className = 'badge bg-success position-absolute top-0 end-0 m-1';
+                topicBadge.textContent = topicsOnDay.length;
+                topicBadge.title = `${topicsOnDay.length} topics added`;
+                dayElement.appendChild(topicBadge);
+            }
+            
+            // Check for revisions due on this day
+            const revisionsOnDay = appData.revisions.filter(revision => 
+                !revision.completed && new Date(revision.dueDate).toDateString() === dateStr
+            );
+            
+            if (revisionsOnDay.length > 0) {
+                const revisionBadge = document.createElement('span');
+                revisionBadge.className = 'badge bg-warning position-absolute bottom-0 end-0 m-1';
+                revisionBadge.textContent = revisionsOnDay.length;
+                revisionBadge.title = `${revisionsOnDay.length} revisions due`;
+                dayElement.appendChild(revisionBadge);
+            }
+            
+            // Add click event for day details
+            dayElement.addEventListener('click', () => showDayDetails(day, month, year));
+            dayElement.style.cursor = 'pointer';
+            
+            return dayElement;
+        }
+
+        function changeMonth(direction) {
+            const currentDate = new Date();
+            currentDate.setMonth(currentDate.getMonth() + direction);
+            generateCalendar();
+        }
+
+        function showDayDetails(day, month, year) {
+            const dateStr = new Date(year, month, day).toDateString();
+            const topicsOnDay = appData.topics.filter(topic => 
+                new Date(topic.dateAdded).toDateString() === dateStr
+            );
+            const revisionsOnDay = appData.revisions.filter(revision => 
+                new Date(revision.dueDate).toDateString() === dateStr
+            );
+            
+            let content = `<h5>Details for ${dateStr}</h5>`;
+            
+            if (topicsOnDay.length > 0) {
+                content += `<h6 class="mt-3">Topics Added (${topicsOnDay.length}):</h6><ul>`;
+                topicsOnDay.forEach(topic => {
+                    content += `<li>${topic.title} - ${topic.category}</li>`;
+                });
+                content += '</ul>';
+            }
+            
+            if (revisionsOnDay.length > 0) {
+                content += `<h6 class="mt-3">Revisions Due (${revisionsOnDay.length}):</h6><ul>`;
+                revisionsOnDay.forEach(revision => {
+                    content += `<li>Revision ${revision.revisionNumber}: ${revision.topicTitle}</li>`;
+                });
+                content += '</ul>';
+            }
+            
+            if (topicsOnDay.length === 0 && revisionsOnDay.length === 0) {
+                content += '<p class="text-muted">No activities on this day.</p>';
+            }
+            
+            showModal('Day Details', content);
+        }
+
+        function updateStatistics() {
+            updateStats();
+            updateProgressChart();
+            updateCategoryChart();
+            updateTimeAnalytics();
+            updateAchievements();
+        }
+
+        function updateStats() {
+            const totalTopics = appData.topics.length;
+            const todayRevisions = appData.revisions.filter(revision => {
+                const today = new Date().toDateString();
+                return !revision.completed && new Date(revision.dueDate).toDateString() === today;
+            }).length;
+            
+            document.getElementById('totalTopics').textContent = totalTopics;
+            document.getElementById('todayRevisions').textContent = todayRevisions;
+            document.getElementById('streakCount').textContent = calculateStreak();
+        }
+
+        function calculateStreak() {
+            // Calculate consecutive days with learning activity
+            let streak = 0;
+            let currentDate = new Date();
+            
+            while (true) {
+                const dateStr = currentDate.toDateString();
+                const hasActivity = appData.topics.some(topic => 
+                    new Date(topic.dateAdded).toDateString() === dateStr
+                ) || appData.revisions.some(revision => 
+                    revision.completed && new Date(revision.completedDate).toDateString() === dateStr
+                );
+                
+                if (hasActivity) {
+                    streak++;
+                    currentDate.setDate(currentDate.getDate() - 1);
+                } else {
+                    break;
+                }
+            }
+            
+            return streak;
+        }
+
+        function updateProgressChart() {
+            // Simple text-based chart for now (can be enhanced with Chart.js)
+            const progressData = generateProgressData();
+            const chartContainer = document.getElementById('progressChart');
+            
+            if (chartContainer) {
+                chartContainer.innerHTML = '';
+                const canvas = document.createElement('div');
+                canvas.innerHTML = `
+                    <div class="text-center">
+                        <h6>Learning Progress Over Time</h6>
+                        <div class="row text-center">
+                            <div class="col-md-3">
+                                <div class="display-4 text-primary">${appData.topics.length}</div>
+                                <small>Total Topics</small>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="display-4 text-success">${appData.revisions.filter(r => r.completed).length}</div>
+                                <small>Completed Revisions</small>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="display-4 text-warning">${appData.revisions.filter(r => !r.completed).length}</div>
+                                <small>Pending Revisions</small>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="display-4 text-info">${Math.round(appData.topics.reduce((sum, topic) => sum + topic.timeSpent, 0) / 60)}h</div>
+                                <small>Total Hours</small>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                chartContainer.appendChild(canvas);
+            }
+        }
+
+        function updateCategoryChart() {
+            const categoryData = {};
+            appData.topics.forEach(topic => {
+                categoryData[topic.category] = (categoryData[topic.category] || 0) + 1;
+            });
+            
+            const chartContainer = document.getElementById('categoryChart');
+            if (chartContainer) {
+                chartContainer.innerHTML = '';
+                const canvas = document.createElement('div');
+                
+                let chartHTML = '<h6 class="text-center mb-3">Topics by Category</h6>';
+                Object.entries(categoryData).forEach(([category, count]) => {
+                    const percentage = ((count / appData.topics.length) * 100).toFixed(1);
+                    chartHTML += `
+                        <div class="mb-2">
+                            <div class="d-flex justify-content-between">
+                                <span>${category}</span>
+                                <span>${count} (${percentage}%)</span>
+                            </div>
+                            <div class="progress" style="height: 20px;">
+                                <div class="progress-bar" style="width: ${percentage}%"></div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                canvas.innerHTML = chartHTML;
+                chartContainer.appendChild(canvas);
+            }
+        }
+
+        function updateTimeAnalytics() {
+            const totalTime = appData.topics.reduce((sum, topic) => sum + topic.timeSpent, 0);
+            const avgTime = totalTime / (appData.topics.length || 1);
+            const dailyAvg = totalTime / Math.max(1, getDaysActive());
+            
+            const analyticsContainer = document.getElementById('timeAnalytics');
+            if (analyticsContainer) {
+                analyticsContainer.innerHTML = `
+                    <div class="row text-center">
+                        <div class="col-md-6 mb-3">
+                            <div class="display-6 text-primary">${Math.round(totalTime / 60)}h ${totalTime % 60}m</div>
+                            <small>Total Study Time</small>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="display-6 text-success">${Math.round(avgTime)}min</div>
+                            <small>Average per Topic</small>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="display-6 text-warning">${Math.round(dailyAvg)}min</div>
+                            <small>Daily Average</small>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="display-6 text-info">${getDaysActive()}</div>
+                            <small>Active Days</small>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function getDaysActive() {
+            const uniqueDays = new Set();
+            appData.topics.forEach(topic => {
+                uniqueDays.add(new Date(topic.dateAdded).toDateString());
+            });
+            return uniqueDays.size;
+        }
+
+        function updateAchievements() {
+            const achievements = calculateAchievements();
+            const container = document.getElementById('achievements');
+            
+            if (container) {
+                container.innerHTML = '';
+                achievements.forEach(achievement => {
+                    const achievementElement = document.createElement('div');
+                    achievementElement.className = `alert ${achievement.unlocked ? 'alert-success' : 'alert-secondary'} p-2 mb-2`;
+                    achievementElement.innerHTML = `
+                        <div class="d-flex align-items-center">
+                            <i class="${achievement.icon} me-2"></i>
+                            <div>
+                                <strong>${achievement.title}</strong>
+                                <small class="d-block">${achievement.description}</small>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(achievementElement);
+                });
+            }
+        }
+
+        function calculateAchievements() {
+            const totalTopics = appData.topics.length;
+            const completedRevisions = appData.revisions.filter(r => r.completed).length;
+            const streak = calculateStreak();
+            
+            return [
+                {
+                    title: 'First Steps',
+                    description: 'Add your first topic',
+                    icon: 'fas fa-baby',
+                    unlocked: totalTopics >= 1
+                },
+                {
+                    title: 'Dedicated Learner',
+                    description: 'Add 10 topics',
+                    icon: 'fas fa-graduation-cap',
+                    unlocked: totalTopics >= 10
+                },
+                {
+                    title: 'Knowledge Seeker',
+                    description: 'Add 50 topics',
+                    icon: 'fas fa-book',
+                    unlocked: totalTopics >= 50
+                },
+                {
+                    title: 'Revision Master',
+                    description: 'Complete 25 revisions',
+                    icon: 'fas fa-redo',
+                    unlocked: completedRevisions >= 25
+                },
+                {
+                    title: 'Consistency King',
+                    description: 'Maintain a 7-day streak',
+                    icon: 'fas fa-fire',
+                    unlocked: streak >= 7
+                },
+                {
+                    title: 'Marathon Learner',
+                    description: 'Maintain a 30-day streak',
+                    icon: 'fas fa-trophy',
+                    unlocked: streak >= 30
+                }
+            ];
+        }
+
+        // Topic Management Functions
+        function editTopic(topicId) {
+            const topic = appData.topics.find(t => t.id === topicId);
+            if (topic) {
+                // Populate form with topic data
+                document.getElementById('topicTitle').value = topic.title;
+                document.getElementById('topicCategory').value = topic.category;
+                document.getElementById('topicDescription').value = topic.description;
+                document.getElementById('difficultyLevel').value = topic.difficulty;
+                document.getElementById('timeSpent').value = topic.timeSpent;
+                document.getElementById('priority').value = topic.priority;
+                document.getElementById('topicTags').value = topic.tags.join(', ');
+                
+                // Change form to edit mode
+                const form = document.getElementById('topicForm');
+                form.dataset.editId = topicId;
+                form.querySelector('button[type="submit"]').innerHTML = '<i class="fas fa-save"></i> Update Topic';
+                
+                // Switch to today tab
+                switchTab('today');
+            }
+        }
+
+        function deleteTopic(topicId) {
+            if (confirm('Are you sure you want to delete this topic and all its revisions?')) {
+                // Remove topic
+                appData.topics = appData.topics.filter(t => t.id !== topicId);
+                
+                // Remove associated revisions
+                appData.revisions = appData.revisions.filter(r => r.topicId !== topicId);
+                
+                saveAppData();
+                updateAllDisplays();
+                showNotification('Topic deleted successfully!', 'info');
+            }
+        }
+
+        function viewTopicDetails(topicId) {
+            const topic = appData.topics.find(t => t.id === topicId);
+            if (topic) {
+                const revisions = appData.revisions.filter(r => r.topicId === topicId);
+                
+                let content = `
+                    <h6>${topic.title}</h6>
+                    <p><strong>Category:</strong> ${topic.category}</p>
+                    <p><strong>Difficulty:</strong> ${topic.difficulty}</p>
+                    <p><strong>Priority:</strong> ${topic.priority}</p>
+                    <p><strong>Time Spent:</strong> ${topic.timeSpent} minutes</p>
+                    <p><strong>Date Added:</strong> ${new Date(topic.dateAdded).toLocaleDateString()}</p>
+                `;
+                
+                if (topic.description) {
+                    content += `<p><strong>Description:</strong> ${topic.description}</p>`;
+                }
+                
+                if (topic.tags.length > 0) {
+                    content += `<p><strong>Tags:</strong> ${topic.tags.join(', ')}</p>`;
+                }
+                
+                content += `<h6 class="mt-3">Revision Schedule:</h6><ul>`;
+                revisions.forEach(revision => {
+                    const status = revision.completed ? '✅ Completed' : '⏳ Pending';
+                    content += `<li>Revision ${revision.revisionNumber}: ${new Date(revision.dueDate).toLocaleDateString()} - ${status}</li>`;
+                });
+                content += '</ul>';
+                
+                showModal('Topic Details', content);
+            }
+        }
+
+        function viewTopicForRevision(topicId) {
+            viewTopicDetails(topicId);
+        }
+
+        function rescheduleRevision(revisionId) {
+            const newDate = prompt('Enter new date (YYYY-MM-DD):');
+            if (newDate) {
+                const revision = appData.revisions.find(r => r.id === revisionId);
+                if (revision) {
+                    revision.dueDate = new Date(newDate).toISOString();
+                    saveAppData();
+                    updateAllDisplays();
+                    showNotification('Revision rescheduled successfully!', 'info');
+                }
+            }
+        }
+
+        function markAllCompleted() {
+            if (confirm('Mark all pending revisions as completed?')) {
+                appData.revisions.forEach(revision => {
+                    if (!revision.completed) {
+                        revision.completed = true;
+                        revision.completedDate = new Date().toISOString();
+                    }
+                });
+                saveAppData();
+                updateAllDisplays();
+                showNotification('All revisions marked as completed!', 'success');
+            }
+        }
+
+        // Settings Functions
+        function saveSettings() {
+            appData.settings.revisionSchedule = [
+                parseInt(document.getElementById('revision1').value),
+                parseInt(document.getElementById('revision2').value),
+                parseInt(document.getElementById('revision3').value),
+                parseInt(document.getElementById('revision4').value),
+                parseInt(document.getElementById('revision5').value),
+                parseInt(document.getElementById('revision6').value)
+            ];
+            
+            appData.settings.notifications = {
+                dailyReminder: document.getElementById('dailyReminder').checked,
+                revisionAlerts: document.getElementById('revisionAlerts').checked
+            };
+            
+            saveAppData();
+            showNotification('Settings saved successfully!', 'success');
+        }
+
+        function exportData() {
+            const dataStr = JSON.stringify(appData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `learning-tracker-backup-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            
+            URL.revokeObjectURL(url);
+            showNotification('Data exported successfully!', 'success');
+        }
+
+        function importData() {
+            document.getElementById('fileInput').click();
+            
+            document.getElementById('fileInput').onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            const importedData = JSON.parse(e.target.result);
+                            if (confirm('This will replace all current data. Continue?')) {
+                                appData = importedData;
+                                saveAppData();
+                                updateAllDisplays();
+                                showNotification('Data imported successfully!', 'success');
+                            }
+                        } catch (error) {
+                            showNotification('Invalid file format!', 'danger');
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+            };
+        }
+
+        function clearAllData() {
+            if (confirm('This will permanently delete all your data. Are you sure?')) {
+                if (confirm('This action cannot be undone. Really delete everything?')) {
+                    appData = {
+                        topics: [],
+                        revisions: [],
+                        settings: {
+                            revisionSchedule: [7, 16, 22, 30, 36, 43],
+                            notifications: {
+                                dailyReminder: true,
+                                revisionAlerts: true
+                            }
+                        },
+                        statistics: {
+                            totalTopics: 0,
+                            completedRevisions: 0,
+                            currentStreak: 0,
+                            studyTime: 0
+                        }
+                    };
+                    saveAppData();
+                    updateAllDisplays();
+                    showNotification('All data cleared!', 'info');
+                }
+            }
+        }
+
+        // Utility Functions
+        function generateUniqueId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+
+        function saveAppData() {
+            try {
+                // Using variables instead of localStorage since it's not supported in artifacts
+                window.appDataBackup = JSON.stringify(appData);
+            } catch (error) {
+                console.error('Error saving data:', error);
+            }
+        }
+
+        function loadAppData() {
+            try {
+                // Using variables instead of localStorage since it's not supported in artifacts
+                if (window.appDataBackup) {
+                    appData = JSON.parse(window.appDataBackup);
+                }
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        }
+
+        function populateCategoryFilter() {
+            const categories = [...new Set(appData.topics.map(topic => topic.category))];
+            const categoryFilter = document.getElementById('categoryFilter');
+            
+            // Clear existing options except "All Categories"
+            categoryFilter.innerHTML = '<option value="all">All Categories</option>';
+            
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category;
+                categoryFilter.appendChild(option);
+            });
+        }
+
+        function updateAllDisplays() {
+            displayTodayTopics();
+            displayRevisions();
+            updateStats();
+            populateCategoryFilter();
+            generateCalendar();
+        }
+
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+            notification.style.top = '20px';
+            notification.style.right = '20px';
+            notification.style.zIndex = '9999';
+            notification.style.minWidth = '300px';
+            
+            notification.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 3000);
+        }
+
+        function showModal(title, content) {
+            // Create modal
+            const modal = document.createElement('div');
+            modal.className = 'modal fade show';
+            modal.style.display = 'block';
+            modal.style.backgroundColor = 'rgba(0,0,0,0.5)';
+            
+            modal.innerHTML = `
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">${title}</h5>
+                            <button type="button" class="btn-close" onclick="closeModal()"></button>
+                        </div>
+                        <div class="modal-body">
+                            ${content}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" onclick="closeModal()">Close</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            window.currentModal = modal;
+        }
+
+        function closeModal() {
+            if (window.currentModal) {
+                document.body.removeChild(window.currentModal);
+                window.currentModal = null;
+            }
+        }
+
+        function generateProgressData() {
+            // Generate data for the last 30 days
+            const data = [];
+            const today = new Date();
+            
+            for (let i = 29; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                const dateStr = date.toDateString();
+                
+                const topicsAdded = appData.topics.filter(topic => 
+                    new Date(topic.dateAdded).toDateString() === dateStr
+                ).length;
+                
+                const revisionsCompleted = appData.revisions.filter(revision => 
+                    revision.completed && new Date(revision.completedDate).toDateString() === dateStr
+                ).length;
+                
+                data.push({
+                    date: dateStr,
+                    topics: topicsAdded,
+                    revisions: revisionsCompleted
+                });
+            }
+            
+            return data;
+        }
+
+        // Initialize revision filters
+        document.getElementById('revisionFilter').addEventListener('change', displayRevisions);
+        document.getElementById('categoryFilter').addEventListener('change', displayRevisions);
+    </script>
+</body>
+</html>
